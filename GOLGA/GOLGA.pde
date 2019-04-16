@@ -1,14 +1,18 @@
 import java.util.Arrays;
+<<<<<<< HEAD
+import java.util.Scanner;
+=======
 
+>>>>>>> origin/master
 PrintWriter output;
 
-int iterations = 50;
+int iterations = -1;
 int boardWidth=50;
 int boardHeight=50;
-float mutationRate=0.001;
+float mutationRate = -1;
 int parentCount=10;
 int keeperCount=1;
-int genSize=100;
+int genSize = -1;
 int realChildren = 20;
 ArrayList<Float> history = new ArrayList<Float>();
 
@@ -224,38 +228,77 @@ void setup()
 {
   output = createWriter("learning.txt"); 
   
-  size(1000,500);
+  size(1000,750);
   frameRate(10000000);
-  
-  generation = new Animal[genSize];
-  for(int c=0;c<generation.length;c++)generation[c] = new Animal(boardWidth,boardHeight);
-
-  i=0;
+  f = createFont("Arial",64);
+   i=0;
   noStroke();
 
 }
 
+String typing = "";
+String saved = "";
+PFont f;
+String prompt = "Iterations?";
+
 
 void draw() { 
   background(255);
-  i++;
-  if(i==iterations){
-    i=0;
-    generation=runGen(generation);
-    generation[0].createGrid();
-    history.add(generation[0].fitness);
-    output.println(generation[0].fitness);
-    output.flush(); // Writes the remaining data to the file
+  if(iterations != -1 && mutationRate != -1 && genSize != -1){
+    i++;
+    if(i==iterations){
+      i=0;
+      generation=runGen(generation);
+      generation[0].createGrid();
+      history.add(generation[0].fitness);
+      output.println(generation[0].fitness);
+      output.flush(); // Writes the remaining data to the file
+    }
+    generation[0].animalGrid.updateGrid();
+    generation[0].animalGrid.displayGrid();
+    
+    float spacing = 500/(history.size()+1.0);
+    stroke(5);
+    for(int i = 0; i < history.size()-1; i++){
+      line(i*spacing+500, 500-history.get(i), (i+1)*spacing+500, 500-history.get(i+1));
+    }
   }
-  generation[0].animalGrid.updateGrid();
-  generation[0].animalGrid.displayGrid();
-  
-  float spacing = 500/(history.size()+1.0);
-  stroke(5);
-  for(int i = 0; i < history.size()-1; i++){
-    line(i*spacing+500, 500-history.get(i), (i+1)*spacing+500, 500-history.get(i+1));
-  }
+  textFont(f);
+  fill(0);
+  text(prompt, 25, 600);
+  text("Input: " + typing,25,700);
 } 
+
+
+void keyPressed() {
+  // If the return key is pressed, save the String and clear it
+  if (key == '\n' && iterations == -1) {
+    String temp = typing;
+    iterations = Integer.parseInt(temp);
+    // A String can be cleared by setting it equal to ""
+    typing = ""; 
+    prompt = "Mutation rate?";
+  } 
+  else if (key == '\n' && mutationRate == -1){
+    String temp2 = typing;
+    mutationRate = Float.parseFloat(temp2);
+    typing = "";
+    prompt = "Generation size?";
+  }
+  else if (key == '\n' && genSize == -1){
+    String temp3 = typing;
+    genSize = Integer.parseInt(temp3);
+    typing = "";
+    prompt = "Starting genetic algorithm...";
+    generation = new Animal[genSize];
+    for(int c=0;c<generation.length;c++)generation[c] = new Animal(boardWidth,boardHeight);
+  }
+  else {
+    // Otherwise, concatenate the String
+    // Each character typed by the user is added to the end of the String variable.
+    typing = typing + key; 
+  }
+}
 
 void stop() {
   output.flush(); // Writes the remaining data to the file
