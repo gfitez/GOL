@@ -1,9 +1,6 @@
 import java.util.Arrays;
-<<<<<<< HEAD
 import java.util.Scanner;
-=======
 
->>>>>>> origin/master
 PrintWriter output;
 
 int iterations = -1;
